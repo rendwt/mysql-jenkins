@@ -8,11 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class UserDAO {
-    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
     private BasicDataSource dbConnection;
 
     public UserDAO(BasicDataSource dbConnection) {
@@ -25,6 +22,7 @@ public class UserDAO {
         int rowCount =0;
         try {
             connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement=connection.prepareStatement("insert into users(username, password, pno, role) values(?,?,?,?)");
             preparedStatement.setString(1, user.getUsername());
@@ -32,8 +30,15 @@ public class UserDAO {
             preparedStatement.setString(3, user.getPno());
             preparedStatement.setString(4, user.getRole());
             rowCount=preparedStatement.executeUpdate();
+            connection.commit();
         }catch (SQLException e){
-            e.printStackTrace();
+            if (connection != null){
+                try {
+                    connection.rollback();
+                }catch (SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
         }finally {
             closeResources(connection, preparedStatement, null);
         }
@@ -47,6 +52,7 @@ public class UserDAO {
         UserDTO user = null;
         try {
             connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement=connection.prepareStatement("select * from users where username = ?");
             preparedStatement.setString(1, username);
@@ -62,8 +68,15 @@ public class UserDAO {
                     user.setRole(resultSet.getString("role"));
                 }
             }
+            connection.commit();
         }catch (SQLException e){
-            e.printStackTrace();
+            if (connection != null){
+                try {
+                    connection.rollback();
+                }catch (SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
         }finally {
             closeResources(connection, preparedStatement, null);
         }
@@ -76,6 +89,7 @@ public class UserDAO {
         UserDTO user = null;
         try {
             connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             preparedStatement=connection.prepareStatement("select * from users where username = ?");
             preparedStatement.setString(1, username);
@@ -88,8 +102,15 @@ public class UserDAO {
                 user.setPno(resultSet.getString("pno"));
                 user.setRole(resultSet.getString("role"));
             }
+            connection.commit();
         }catch (SQLException e){
-            e.printStackTrace();
+            if (connection != null){
+                try {
+                    connection.rollback();
+                }catch (SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
         }finally {
             closeResources(connection, preparedStatement, null);
         }
@@ -98,13 +119,14 @@ public class UserDAO {
 
     public List<UserDTO> getUsers() {
 
-        List<UserDTO> groceryList = new ArrayList<>();
+        List<UserDTO> users = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             String query = "SELECT * FROM users ";
             preparedStatement = connection.prepareStatement(query);
@@ -117,14 +139,21 @@ public class UserDAO {
                 user.setPassword(resultSet.getString("password"));
                 user.setPno(resultSet.getString("pno"));
                 user.setRole(resultSet.getString("role"));
-                groceryList.add(user);
+                users.add(user);
             }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error retrieving users", e);
-        } finally {
+            connection.commit();
+        }catch (SQLException e){
+            if (connection != null){
+                try {
+                    connection.rollback();
+                }catch (SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
+        }finally {
             closeResources(connection, preparedStatement, resultSet);
         }
-        return groceryList;
+        return users;
     }
 
     public int editUser(UserDTO user) {
@@ -133,6 +162,7 @@ public class UserDAO {
         int rowCount = 0;
         try {
             connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = connection.prepareStatement("UPDATE users SET username=?, password=?, pno=?, role=? WHERE id=?");
             preparedStatement.setString(1, user.getUsername());
@@ -141,9 +171,16 @@ public class UserDAO {
             preparedStatement.setString(4, user.getRole());
             preparedStatement.setInt(5, user.getUserId());
             rowCount = preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
+            connection.commit();
+        }catch (SQLException e){
+            if (connection != null){
+                try {
+                    connection.rollback();
+                }catch (SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
+        }finally {
             closeResources(connection, preparedStatement, null);
         }
         return rowCount;
@@ -156,13 +193,21 @@ public class UserDAO {
         int rowCount = 0;
         try {
             connection = dbConnection.getConnection();
+            connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             preparedStatement = connection.prepareStatement("DELETE FROM users WHERE id=?");
             preparedStatement.setInt(1, userId);
             rowCount = preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
+            connection.commit();
+        }catch (SQLException e){
+            if (connection != null){
+                try {
+                    connection.rollback();
+                }catch (SQLException ex){
+                    ex.printStackTrace();
+                }
+            }
+        }finally {
             closeResources(connection, preparedStatement, null);
         }
         return rowCount;
