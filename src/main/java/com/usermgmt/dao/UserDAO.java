@@ -8,8 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserDAO {
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
     private BasicDataSource dbConnection;
 
     public UserDAO(BasicDataSource dbConnection) {
@@ -94,6 +97,7 @@ public class UserDAO {
     }
 
     public List<UserDTO> getUsers() {
+
         List<UserDTO> groceryList = new ArrayList<>();
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -116,7 +120,7 @@ public class UserDAO {
                 groceryList.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error retrieving users", e);
         } finally {
             closeResources(connection, preparedStatement, resultSet);
         }
