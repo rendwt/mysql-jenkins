@@ -6,6 +6,8 @@
 </head>
 <body>
     <h1>Create User</h1>
+    <div id="userlist">
+    </div><br><br>
     <form action="register" method="post">
         Username: <input type="text" name="username"><br>
         Password: <input type="password" name="password"><br>
@@ -18,5 +20,7 @@
         <input type="submit" value="Create">
     </form>
     <a href="home.jsp">Back to home</a>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="scripts/display.js"></script>
 </body>
 </html>
