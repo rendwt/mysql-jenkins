@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-  <!--<filter>
+  <filter>
     <filter-name>AuthFilter</filter-name>
     <filter-class>com.usermgmt.filter.AuthFilter</filter-class>
   </filter>
@@ -11,7 +11,6 @@
     <filter-name>AuthFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-         -->
   <welcome-file-list>
     <welcome-file>home.jsp</welcome-file>
   </welcome-file-list>
